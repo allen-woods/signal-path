@@ -6,6 +6,10 @@
   "repository": "git@github.com:allen-woods/signal-path.git",
   "author": "allen-woods <allen.woods@flatironschool.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=production node -r esm .",
+    "dev": "eval $(cat .env) nodemon -r esm"
+  },
   "dependencies": {
     "@hapi/joi": "^15.0.3",
     "apollo-server": "^2.5.0",
