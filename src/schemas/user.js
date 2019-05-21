@@ -37,18 +37,18 @@ const password = Joi
     }
   })
 
-  export const signUp = Joi
-    .object()
-    .keys({
-      email,
-      username,
-      name,
-      password
-    })
-  
-  export const signIn = Joi
-    .object()
-    .keys({
-      email,
-      password
-    })
+export const signUp = Joi
+  .object()
+  .keys({
+    email,
+    username,
+    name,
+    password
+  })
+
+export const signIn = Joi
+  .object()
+  .keys({
+    email,
+    password
+  })

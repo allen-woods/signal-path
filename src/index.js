@@ -1,7 +1,5 @@
 import mongoose from 'mongoose'
-import cookieParser from 'cookie-parser'
 import csrf from 'csurf'
-import bodyParser from 'body-parser'
 import express from 'express'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
@@ -49,22 +47,49 @@ import {
       pass: REDIS_PASSWORD
     })
 
+    // * Bind express body parser to prevent CSRF attacks
+    // * Bind CSRF Token middleware to our session
+    // * Bind function to append CSRF Token to every request
+
+    app.use(express.urlencoded({ extended: false }))
+    app.use(csrf())
+    app.use((req, res, next) => {
+      res.locals.csrftoken = req.csrfToken()
+      next()
+    })
+
     // Bind session to our app instance.
     app.use(session({
-      store,                            /* Use Redis */
-      name: SESS_NAME,                  /* Name of session */
-      secret: SESS_SECRET,              /* Signed secret */
-      resave: true,                     /* Force session to be saved back to Redis store */
-      rolling: true,                    /* Force session ID cookie to be set on every response */
-                                        /* Also resets expiration to original maxAge (keeps cookie alive) */
+      /* Use Redis */
+      store,
 
-      saveUninitialized: false,         /* Comply with laws that require permission before setting a cookie */
-                                        /* Also prevents race conditions caused by parallel requests */
+      /* Name of session */
+      name: SESS_NAME,
 
-      cookie: {                         /* Session cookies */
-        maxAge: parseInt(SESS_LIFETIME),/* Two hour maxAge */
-        sameSite: true,                 /* Strict same site enforcement */
-        secure: IN_PROD                 /* Lock down through HTTPS when deployed */
+      /* Signed secret */
+      secret: SESS_SECRET,
+
+      /* Force session to be saved back to Redis store */
+      resave: true,
+
+      /* Force session ID cookie to be set on every response */
+      /* Also resets expiration to original maxAge (keeps cookie alive) */
+      rolling: true,
+
+      /* Comply with laws that require permission before setting a cookie */
+      /* Also prevents race conditions caused by parallel requests */
+      saveUninitialized: false,
+
+      /* Session cookies */
+      cookie: {
+        /* Two hour maxAge */
+        maxAge: parseInt(SESS_LIFETIME),
+
+        /* Strict same site enforcement */
+        sameSite: true,
+
+        /* Lock down through HTTPS when deployed */
+        secure: IN_PROD
       }
     }))
 
@@ -89,29 +114,3 @@ import {
     console.error(err)
   }
 })()
-
-/*
-import cookieParser from 'cookie-parser'
-import csrf from 'csurf'
-import bodyParser from 'body-parser'
-import express from 'express'
-
-// setup route middlewares
-const csrfProtection = csrf({ cookie: true })
-const parseForm = bodyParser.urlencoded({ extended: false })
-
-// create express app
-const app = express()
-
-// parse cookies
-// we need this because "cookie" is true in csrfProtection
-app.use(cookieParser())
-
-app.get('/form', csrfProtection, (req, res) => {
-  // pass the csrfToken to the view
-  res.render('send', { csrfToken: req.csrfToken() })
-})
-
-app.post('/process', parseForm, csrfProtection, (req, res) => {
-  res.send('data is being processed')
-})*/

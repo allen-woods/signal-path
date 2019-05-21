@@ -32,18 +32,18 @@ const userSchema = new Schema({
 // If these functions fail, use function () and 'this'
 // to fix them.
 
-userSchema.pre('save', async () => {
-  if (isModified('password')) {
-    password = await hash(password, 10)
+userSchema.pre('save', async function () {
+  if (this.isModified('password')) {
+    this.password = await hash(this.password, 10)
   }
 })
 
-userSchema.statics.notFound = async (options) => {
-  return await where(options).countDocuments() === 0
+userSchema.statics.notFound = async function (options) {
+  return await this.where(options).countDocuments() === 0
 }
 
-userSchema.methods.matchesPassword = (passwordArg) => {
-  return compare(passwordArg, password)
+userSchema.methods.matchesPassword = function (password) {
+  return compare(password, this.password)
 }
 
 const User = mongoose.model('User', userSchema)
