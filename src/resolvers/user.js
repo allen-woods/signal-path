@@ -20,7 +20,7 @@ export default {
     }
   },
   Mutation: {
-    signUp: async (root, args, { req }, info) => {
+    signUp: async (root, args, { req, res }, info) => {
       // TODO: projection
       await Joi.validate(args, signUp, { abortEarly: false })
 
@@ -30,7 +30,7 @@ export default {
 
       return user
     },
-    signIn: async (root, args, { req }, info) => {
+    signIn: async (root, args, { req, res }, info) => {
       // TODO: projection
       await Joi.validate(args, signIn, { abortEarly: false })
 
@@ -45,9 +45,9 @@ export default {
     }
   },
   User: {
-    songs: async (user, args, { req }, info) => {
-      // TODO: should not be able to lost other ppl's songs or read their song files!
-      return (await user.populate('songs').execPopulate()).songs
-    }
+    // songs: async (user, args, { req }, info) => {
+    //   // TODO: should not be able to list other ppl's songs or read their song files!
+    //   return (await user.populate('songs').execPopulate()).songs
+    // }
   }
 }

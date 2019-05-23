@@ -5,8 +5,8 @@ export const {
   NODE_ENV = 'development',
 
   /* MongoDB Specific */
-  DB_USERNAME = 'admin',
-  DB_PASSWORD = 'secret',
+  DB_USERNAME = 'allen',
+  DB_PASSWORD = 'pr3ci0usb4byb1bs',
   DB_HOST = 'localhost',
   DB_PORT = 27017,
   DB_NAME = 'signal-path',
@@ -19,7 +19,7 @@ export const {
   /* Redis Store Specific */
   REDIS_HOST = 'localhost',
   REDIS_PORT = 6379,
-  REDIS_PASSWORD = 'secret'
+  REDIS_PASSWORD = 'Ilov3f0OD!'
 } = process.env
 
 // Truthy boolean coerced from NODE_ENV.

@@ -1,4 +1,6 @@
 import mongoose from 'mongoose'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 import csrf from 'csurf'
 import express from 'express'
 import session from 'express-session'
@@ -47,17 +49,6 @@ import {
       pass: REDIS_PASSWORD
     })
 
-    // * Bind express body parser to prevent CSRF attacks
-    // * Bind CSRF Token middleware to our session
-    // * Bind function to append CSRF Token to every request
-
-    app.use(express.urlencoded({ extended: false }))
-    app.use(csrf())
-    app.use((req, res, next) => {
-      res.locals.csrftoken = req.csrfToken()
-      next()
-    })
-
     // Bind session to our app instance.
     app.use(session({
       /* Use Redis */
@@ -93,6 +84,32 @@ import {
       }
     }))
 
+    // * Bind CSRF Token middleware to our session
+    // * Bind function to append CSRF Token to every request
+    // app.use(csrf())
+    // app.use(async (req, res, next) => {
+    //   const token = await req.csrfToken()
+    //   if (token !== 'null') {
+    //     try {
+    //       res.locals.csrftoken = token
+    //     } catch (err) {
+    //       console.error(err)
+    //     }
+    //   }
+    //   next()
+    // })
+
+    /**
+     * NOTE: CSRF protection cannot be implemented without
+     * a front end supplying the actual token upon each request.
+     * Attempting to test the backend by itself without a
+     * front end to supply the token back to the backend
+     * will fail. This is not due to a failure of the
+     * `csurf` package.
+     * Only enable CSRF protection once the front end
+     * is connected.
+     */
+
     const server = new ApolloServer({
       typeDefs,
       resolvers,
@@ -105,7 +122,12 @@ import {
       context: ({ req, res }) => ({ req, res })
     })
 
-    server.applyMiddleware({ app, cors: false })
+    const corsOptions = {
+      origin: 'http://localhost:3000/',
+      credentials: true
+    }
+
+    server.applyMiddleware({ app, cors: corsOptions })
 
     app.listen({ port: APP_PORT }, () =>
       console.log(`http://localhost:${APP_PORT}${server.graphqlPath}`)

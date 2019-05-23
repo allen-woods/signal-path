@@ -16,10 +16,10 @@ const userSchema = new Schema({
       message: 'Username has already been taken.'
     }
   },
-  songs: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Song'
-  }],
+  // songs: [{
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Song'
+  // }],
   name: String,
   password: String
 }, {
