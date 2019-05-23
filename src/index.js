@@ -49,6 +49,10 @@ import {
       pass: REDIS_PASSWORD
     })
 
+    // Bind body parser at the top, expect JSON
+    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(bodyParser.json())
+
     // Bind session to our app instance.
     app.use(session({
       /* Use Redis */
@@ -84,32 +88,41 @@ import {
       }
     }))
 
-    // * Bind CSRF Token middleware to our session
-    // * Bind function to append CSRF Token to every request
-    // app.use(csrf())
-    // app.use(async (req, res, next) => {
-    //   const token = await req.csrfToken()
-    //   if (token !== 'null') {
-    //     try {
-    //       res.locals.csrftoken = token
-    //     } catch (err) {
-    //       console.error(err)
-    //     }
-    //   }
-    //   next()
-    // })
+    // * Bind cookie-parser for handling CSRF
+    app.use(cookieParser())
 
-    /**
-     * NOTE: CSRF protection cannot be implemented without
-     * a front end supplying the actual token upon each request.
-     * Attempting to test the backend by itself without a
-     * front end to supply the token back to the backend
-     * will fail. This is not due to a failure of the
-     * `csurf` package.
-     * Only enable CSRF protection once the front end
-     * is connected.
-     */
+    // * Bind csurf for authenticating site access
+    app.use(csrf({
+      value: function (req) {
+        return req.cookies['_csrf']
+      }
+    }))
 
+    // * Bind error handler
+    app.use((err, req, res, next) => {
+      if (err.code !== 'EBADCSRFTOKEN') return next(err)
+      res.status(403).json({
+        'error': 'session expired or token tampered with'
+      })
+    })
+
+    // * Bind function that updates CSRF on each action
+    app.use(async (req, res, next) => {
+      const token = await req.csrfToken()
+      if (token !== 'null') {
+        try {
+          res.cookie('_csrf', token, {
+            httpOnly: true,
+            sameSite: 'strict'
+          })
+        } catch (err) {
+          console.error(err)
+        }
+      }
+      next()
+    })
+
+    // * Apollo Server instance
     const server = new ApolloServer({
       typeDefs,
       resolvers,
@@ -122,13 +135,10 @@ import {
       context: ({ req, res }) => ({ req, res })
     })
 
-    const corsOptions = {
-      origin: 'http://localhost:3000/',
-      credentials: true
-    }
+    // * Bind the middleware
+    server.applyMiddleware({ app, cors: false })
 
-    server.applyMiddleware({ app, cors: corsOptions })
-
+    // * Start the server
     app.listen({ port: APP_PORT }, () =>
       console.log(`http://localhost:${APP_PORT}${server.graphqlPath}`)
     )
