@@ -31,7 +31,7 @@ export default gql`
     email: String!      # Must have an email
     username: String!   # Must have a username
     name: String!       # Must have a name
-    # songs: [Song!]!     # Must have an array of non-null songs or a non-null empty array
+    projects: [Project!]! # Must have an array of non-null projects or a non-null empty array
     createdAt: String!  # Must have a date of creation
     updatedAt: String!  # Must have a date of last update
   }

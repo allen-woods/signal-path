@@ -24,7 +24,7 @@ const password = Joi
   .string()
   .min(8)
   .max(50)
-  .regex(/^(?=\S*[a-z)(?=[A-Z])(?=\S*\d).*$/)
+  .regex(/^(?=\S*[a-z])(?=[A-Z])(?=\S*\d).*$/)
   .required()
   .label('Password')
   .options({

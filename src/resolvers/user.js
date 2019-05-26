@@ -30,7 +30,7 @@ export default {
   // (Create, Update, Delete in CRUD)
   Mutation: {
     // Custom mutation for creating a new User
-    signUp: async (root, args, { req, res }, info) => {
+    signUp: async (root, args, { req }, info) => {
       // TODO: projection
       await Joi.validate(args, signUp, { abortEarly: false })
       // MongoDB callback function for Create
@@ -42,7 +42,7 @@ export default {
     },
     // Custom mutation for authenticating a User
     // (This technically isn't a CRUD action.)
-    signIn: async (root, args, { req, res }, info) => {
+    signIn: async (root, args, { req }, info) => {
       // TODO: projection
       await Joi.validate(args, signIn, { abortEarly: false })
       // Authenticate a user, handles error if it fails
@@ -65,9 +65,10 @@ export default {
    * normalized data associated with a given User.
    */
   User: {
-    // songs: async (user, args, { req }, info) => {
-    //   // TODO: should not be able to list other ppl's songs or read their song files!
-    //   return (await user.populate('songs').execPopulate()).songs
-    // }
+    projects: async (user, args, context, info) => {
+      // TODO: should not be able to list other ppl's projects or read their project files!
+      const outputTest = (await user.populate('projects').execPopulate()).projects
+      return outputTest
+    }
   }
 }

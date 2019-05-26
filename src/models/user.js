@@ -1,6 +1,8 @@
 import mongoose, { Schema } from 'mongoose'
 import { hash, compare } from 'bcryptjs'
 
+const { ObjectId } = Schema.Types
+
 const userSchema = new Schema({
   email: {
     type: String,
@@ -16,10 +18,10 @@ const userSchema = new Schema({
       message: 'Username has already been taken.'
     }
   },
-  // songs: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Song'
-  // }],
+  projects: [{
+    type: ObjectId,
+    ref: 'Project'
+  }],
   name: String,
   password: String
 }, {
