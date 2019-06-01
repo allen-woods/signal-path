@@ -9,7 +9,7 @@ import { User, Project } from '../models'
 
 export default {
   Query: {
-    projects: (root, args, { req }, info) => {
+    projects: (root, args, context, info) => {
       return Project.find({})
     },
     project: async (root, args, context, info) => {
@@ -69,8 +69,14 @@ export default {
    * normalized data associated with a given Project.
    */
   Project: {
-    creator: async (project, args, { req }, info) => {
+    entities: async (project, args, context, info) => {
+      return (await project.populate('entities').execPopulate()).entities
+    },
+    creator: async (project, args, context, info) => {
       return (await project.populate('creator').execPopulate()).creator
+    },
+    collaborator: async (project, args, context, info) => {
+      return (await project.populate('collaborator').execPopulate()).collaborator
     }
   }
 }

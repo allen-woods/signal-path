@@ -16,7 +16,9 @@ export default gql`
     id: ID!
     title: String!
     genre: String!
+    entities: [Entity!]!
     creator: User!
+    collaborator: User # Ok to be null in case no one joins
     createdAt: String!
     updatedAt: String!
   }

@@ -5,7 +5,15 @@ const { ObjectId } = Schema.Types
 const projectSchema = new Schema({
   title: String,
   genre: String,
+  entities: [{
+    type: ObjectId,
+    ref: 'Entity'
+  }],
   creator: {
+    type: ObjectId,
+    ref: 'User'
+  },
+  collaborator: {
     type: ObjectId,
     ref: 'User'
   }

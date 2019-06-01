@@ -28,12 +28,6 @@ const userSchema = new Schema({
   timestamps: true
 })
 
-// Anonymous function was used instead of arrow function,
-// also used keyword 'this' in function body.
-
-// If these functions fail, use function () and 'this'
-// to fix them.
-
 userSchema.pre('save', async function () {
   if (this.isModified('password')) {
     this.password = await hash(this.password, 10)

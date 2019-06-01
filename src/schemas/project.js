@@ -27,12 +27,20 @@ const creator = Joi
   .max(24)
   .label('Creator')
 
-export const getProject = Joi
+const collaborator = Joi
+  .string()
+  .alphanum()
+  .min(24)
+  .max(24)
+  .label('Collaborator')
+
+export const readProject = Joi
   .object()
   .keys({
     title,
     genre,
-    creator
+    creator,
+    collaborator
   })
 
 export const createProject = Joi
@@ -48,7 +56,8 @@ export const updateProject = Joi
   .keys({
     id,
     title,
-    genre
+    genre,
+    collaborator
   })
 
 export const deleteProject = Joi
