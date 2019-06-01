@@ -91,7 +91,7 @@ export default {
       const destEntity = Entity.findById(destId)
 
       // Validate
-      await Joi.validate(args, connectToEntity, { abortEarly: false })
+      await Joi.validate(args, disconnectFromEntity, { abortEarly: false })
 
       // Only proceed if the Ids are different
       if (srcId !== destId) {
@@ -120,6 +120,9 @@ export default {
       }
     },
     deleteEntity: async (project, args, context, info) => {
+      // TODO: Refactor these mutations
+      // that deal with refs into cleaner versions.
+
       // Extract the Project and Entity IDs
       const projectId = project.id
       const { id } = args
@@ -134,7 +137,7 @@ export default {
       for (let i = 0; i < hostEntity.inputs.length; i++) {
         let inputId = hostEntity.inputs[i].id
         // Decouple reverse refs to removed Entity
-        Entity.findByIdAndUpdate(inputId, {
+        await Entity.findByIdAndUpdate(inputId, {
           $pull: {
             outputs: id
           }
@@ -148,7 +151,7 @@ export default {
       for (let o = 0; o < hostEntity.outputs.length; o++) {
         let outputId = hostEntity.outputs[o].id
         // Decouple reverse refs to removed Entity
-        Entity.findByIdAndUpdate(outputId, {
+        await Entity.findByIdAndUpdate(outputId, {
           $pull: {
             inputs: id
           }

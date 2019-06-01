@@ -25,26 +25,6 @@ const entitySchema = new Schema({
   timestamps: true
 })
 
-// entitySchema.pre('remove', async function () {
-//   for (let i = 0; i < this.inputs.length; i++) {
-//     let inputId = this.inputs[i]._id
-//     Entity.findByIdAndUpdate(inputId, {
-//       $pull: {
-//         outputs: this._id
-//       }
-//     })
-//   }
-
-//   for (let o = 0; o < this.outputs.length; o++) {
-//     let outputId = this.outputs[o]._id
-//     Entity.findByIdAndUpdate(outputId, {
-//       $pull: {
-//         inputs: this._id
-//       }
-//     })
-//   }
-// })
-
 const Entity = mongoose.model('Entity', entitySchema)
 
 export default Entity
